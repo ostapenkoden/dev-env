@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  php-fpm:
+    build: ./php-fpm/
+    volumes:
+      - ../php:/var/www:cached
+    ports:
+      - 9000:9000
+    networks:
+      - backend
+  nginx:
+    build: ./nginx/
+    volumes:
+      - ../php:/var/www:cached
+      - ./log/nginx:/var/log/nginx
+      - ./nginx/sites:/etc/nginx/sites-available
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - php-fpm
+    networks:
+      - frontend
+      - backend
+    ports:
+      - 80:80
+      - 443:443
+  mysql:
+    build: ./mysql/
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_DATABASE=homestead
+      - MYSQL_USER=homestead
+      - MYSQL_PASSWORD=secret
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - backend
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
