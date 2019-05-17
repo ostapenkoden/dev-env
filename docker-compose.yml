@@ -42,8 +42,6 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_DB=test
-      - POSTRGES_USER=test
       - POSTGRES_PASSWORD=secret
     restart: always
     volumes:
